@@ -103,7 +103,6 @@ const updateKyc = (type, userId) => {
       } else if (type === 'license') {
         user.licenseStatus = constants.STATUS.Verified
       }
-
       user = ratingUtil.getUserRating(user)
       return userDao.updateUser(user)
     })

@@ -2,8 +2,10 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../controller/userController')
 const logger = require('../utils/logger')
+const fs = require('fs-extra')
 const multer = require('multer')
 const upload = multer({ dest: '/tmp/' })
+const signzy = require('../thirdpartyapis/signzy')
 
 router.post('/signup', function(req, res, next) {
   const user = {
@@ -75,49 +77,28 @@ router.get('/', function(req, res, next) {
 })
 
 router.post('/doc/upload', upload.any(), function(req, res, next) {
-  const type = req.body.type || req.query.type
-  const userId = req.body.userId || req.query.userId
+  const type = req.body.type
+  const userId = req.body.userId
   const files = req.files[0]
   const fileName = type + '_' + userId + '.png'
   const filePath = './public/images/'+ fileName
-
-  return userController.docUpload(files, type, userId, fileName, filePath)
-    .then((user) => {
-      logger.info(userId, 'successfully uploaded ' + type)
-      res.json({
-        success:true,
-        user: user
-      })
-    })
-    .catch((e) => {
-      logger.err(userId, 'error while uploading' + type, e)
-      res.json({
+  fs.rename(files.path, filePath, function(e) {
+    if (e) {
+      logger.err(userId, 'error while uploading ' + type, e)
+      return res.json({
         success:false,
         message: e.message
       })
+    }
+
+    //send image to signzy
+    signzy.createIdentity(userId, type, fileName)
+    //update user object with status of document
+    return res.json({
+      success:true,
+      message: type + ' uploaded successfully'
     })
+  })
 })
-
-router.get('/update-kyc', upload.any(), function(req, res, next) {
-  const type = req.body.type || req.query.type
-  const userId = req.body.userId || req.query.userId
-
-  return userController.updateKyc(type, userId)
-    .then((user) => {
-      logger.info(userId, 'successfully uploaded ' + type)
-      res.json({
-        success:true,
-        user: user
-      })
-    })
-    .catch((e) => {
-      logger.err(userId, 'error while uploading' + type, e)
-      res.json({
-        success:false,
-        message: e.message
-      })
-    })
-})
-
 
 module.exports = router
