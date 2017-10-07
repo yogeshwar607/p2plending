@@ -21,7 +21,9 @@ const userSchema = new Schema({
   licenseImagePath: String,
   dob: String,
   rating: Number,
-  isVerified: Boolean
+  isVerified: Boolean,
+  score:Number,
+  eligibleAmount:Number
 })
 
 module.exports = Connection.connection.model('user', userSchema)

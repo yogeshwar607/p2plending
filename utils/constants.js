@@ -12,7 +12,7 @@ constants.SIGNZY_CALLBAK_URL = constants.HOST  + '/thirdparty/signzy/callback'
 
 constants.AADHAAR_DETAILS = {
   aadhaarNo: "562534261133",
-  dob: "01/091993",
+  dob: "01/09/1993",
   name: "Som Prabh Sharma"
 }
 
