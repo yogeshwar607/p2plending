@@ -58,59 +58,58 @@
     </div>
 </div>
 <script>
-  $('#login-form-link').click(function(e) {
-    $("#login-form").delay(100).fadeIn(100);
-    $("#register-form").fadeOut(100);
-    $('#register-form-link').removeClass('active');
-    $(this).addClass('active');
-    e.preventDefault();
-  });
-  $('#register-form-link').click(function(e) {
-    $("#register-form").delay(100).fadeIn(100);
-    $("#login-form").fadeOut(100);
-    $('#login-form-link').removeClass('active');
-    $(this).addClass('active');
-    e.preventDefault();
-  });
-  const loginForm = $('#login-form');
-  const registerForm = $('#register-form');
-
-  loginForm.submit(function (e) {
-    e.preventDefault();
-    $.ajax({
-      type: 'POST',
-      url: 'https://322b3761.ngrok.io/users/signin',
-      data: loginForm.serialize(),
-      success: function (response) {
-        if(response["success"]) {
-          createCookie("access-token",response["userId"],1)
-        }
-        location.reload()
-      },
-      error: function (response) {
-        alert('An error occurred.');
-        location.reload()
-      }
+    $('#login-form-link').click(function(e) {
+        $("#login-form").delay(100).fadeIn(100);
+        $("#register-form").fadeOut(100);
+        $('#register-form-link').removeClass('active');
+        $(this).addClass('active');
+        e.preventDefault();
     });
-  });
-
-  registerForm.submit(function (e) {
-    e.preventDefault();
-    $.ajax({
-      type: 'POST',
-      url: 'https://322b3761.ngrok.io/users/signup',
-      data: registerForm.serialize(),
-      success: function (response) {
-        if(response["success"]) {
-          createCookie("access-token",response["userId"],1)
-        }
-        location.reload()
-      },
-      error: function (response) {
-        alert('An error occurred.');
-        location.reload()
-      }
+    $('#register-form-link').click(function(e) {
+        $("#register-form").delay(100).fadeIn(100);
+        $("#login-form").fadeOut(100);
+        $('#login-form-link').removeClass('active');
+        $(this).addClass('active');
+        e.preventDefault();
     });
-  });
+    const loginForm = $('#login-form');
+    const registerForm = $('#register-form');
 
+    loginForm.submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: 'https://dcbhack.azurewebsites.net/users/signin',
+            data: loginForm.serialize(),
+            success: function(response) {
+                if (response["success"]) {
+                    createCookie("access-token", response["userId"], 1)
+                }
+                location.reload()
+            },
+            error: function(response) {
+                alert('An error occurred.');
+                location.reload()
+            }
+        });
+    });
+
+    registerForm.submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: 'https://dcbhack.azurewebsites.net/users/signup',
+            data: registerForm.serialize(),
+            success: function(response) {
+                if (response["success"]) {
+                    createCookie("access-token", response["userId"], 1)
+                }
+                location.reload()
+            },
+            error: function(response) {
+                alert('An error occurred.');
+                location.reload()
+            }
+        });
+    });
 </script>
