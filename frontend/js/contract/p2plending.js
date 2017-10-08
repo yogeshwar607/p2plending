@@ -120,5 +120,5 @@ function main() {
       return true
     })
   }
-  return { sugnUp, enable, getEntity, setRateAndDays, increaseRating, decreaseRating, }
+  return { sugnUp, enable, getEntity, setRateAndDays, increaseRating, decreaseRating, lend, currentAccount}
 }

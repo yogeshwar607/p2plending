@@ -233,6 +233,7 @@
       data: data,
       success: function (data) {
         if(data["success"]) {
+          contract.setRateAndDays(parseInt(obj["ROI"]), parseInt(obj["duration"]))
           alert("Successfully Submitted Proposal")
         } else {
           alert("Error occured while submitting proposal")
@@ -274,6 +275,7 @@
       data: data,
       success: function (data) {
         if(data["success"]) {
+          contract.setRateAndDays(parseInt(obj["ROI"]), parseInt(obj["duration"]))
           alert("Successfully Submitted Proposal")
         } else {
           alert("Error occured while submitting proposal")

@@ -29,6 +29,7 @@ function acceptProposal(userId, proposalId) {
     url: 'https://322b3761.ngrok.io/loan-proposals/accept?userId='+userId+ '&proposalId='+proposalId,
     success: function (response) {
       alert('Successfully accepted proposal');
+      contract.lend(contract.currentAccount, constant.User.borrower, 1000)
       location.reload()
     },
     error: function (response) {
