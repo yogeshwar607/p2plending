@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controller/userController')
+const loanProposalController = require('../controller/loanProposalController')
+const lendProposalController = require('../controller/lendProposalController')
 const logger = require('../utils/logger')
 const fs = require('fs-extra')
 const multer = require('multer')
@@ -77,28 +79,140 @@ router.get('/', function(req, res, next) {
 })
 
 router.post('/doc/upload', upload.any(), function(req, res, next) {
-  const type = req.body.type
-  const userId = req.body.userId
+  const type = req.body.type || req.query.type
+  const userId = req.body.userId || req.query.userId
   const files = req.files[0]
   const fileName = type + '_' + userId + '.png'
   const filePath = './public/images/'+ fileName
-  fs.rename(files.path, filePath, function(e) {
-    if (e) {
-      logger.err(userId, 'error while uploading ' + type, e)
-      return res.json({
+
+  return userController.docUpload(files, type, userId, fileName, filePath)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded ' + type)
+      res.json({
+        success:true,
+        user: user
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading' + type, e)
+      res.json({
         success:false,
         message: e.message
       })
-    }
-
-    //send image to signzy
-    signzy.createIdentity(userId, type, fileName)
-    //update user object with status of document
-    return res.json({
-      success:true,
-      message: type + ' uploaded successfully'
     })
-  })
+})
+
+router.get('/update-kyc', upload.any(), function(req, res, next) {
+  const type = req.body.type || req.query.type
+  const userId = req.body.userId || req.query.userId
+
+  return userController.updateKyc(type, userId)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded ' + type)
+      res.json({
+        success:true,
+        user: user
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading' + type, e)
+      res.json({
+        success:false,
+        message: e.message
+      })
+    })
+})
+
+router.post('/update', function(req, res, next) {
+  const userId = req.query.userId
+  const user = {
+    userId: req.query.userId,
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    mobile: req.body.mobile,
+    password: req.body.password,
+    dob: req.body.dob
+  }
+
+  return userController.updateUser(user, userId)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded')
+      res.json({
+        success:true,
+        user: user
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading', e)
+      res.json({
+        success:false,
+        message: e.message
+      })
+    })
+})
+
+router.get('/me/loan-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return loanProposalController.getProposals(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting proposals'
+      })
+    })
+})
+
+router.get('/loan-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return loanProposalController.getMatchedProposals(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned matched proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned matched proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting matched proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting matched proposals'
+      })
+    })
+})
+
+router.get('/me/lend-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return lendProposalController.getProposalFromUserId(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting proposals'
+      })
+    })
 })
 
 module.exports = router

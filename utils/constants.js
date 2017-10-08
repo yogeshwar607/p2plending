@@ -32,4 +32,10 @@ constants.STATUS = {
   NotVerified: 'Not Verified'
 }
 
+constants.PROPOSAL_STATUS = {
+  OPEN: 'Open',
+  COMPLETE: 'Complete',
+  ACCEPTED: 'Accepted'
+}
+
 module.exports = constants

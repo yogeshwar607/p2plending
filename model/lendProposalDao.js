@@ -2,40 +2,24 @@
 const Promise = require('bluebird')
 const cleanDeep = require('clean-deep')
 
-const userSchema = require('../model/schema/userSchema')
+const lendProposalSchema = require('../model/schema/lendProposalSchema')
 
-const saveUser = (user) => {
-  const userObj = new userSchema(user)
-  
+const saveProposal = (lendProposal) => {
+  const lendObj = new lendProposalSchema(lendProposal)
+
   return new Promise((resolve, reject) => {
-    userObj.save((err)=>{
+    lendObj.save((err)=>{
       if(err){
         return reject(err)
       }
-      return resolve(user)
+      return resolve(lendObj)
     })
   })
 }
 
-const getUserFromUsername = (username) => {
+const getlendProposalFromProposalId = (proposalId) => {
   return new Promise((resolve, reject) => {
-    userSchema.findOne({username:username},(err, data)=>{
-      if(err){
-        return reject(err)
-      }
-
-      if(data && data._doc) {
-        return resolve(data._doc)
-      }else {
-        return resolve(null)
-      }
-    })
-  })
-}
-
-const getUserFromUserId = (userId) => {
-  return new Promise((resolve, reject) => {
-    userSchema.findOne({userId:userId},(err, data)=>{
+    lendProposalSchema.findOne({proposalId:proposalId},(err, data)=>{
       if(err){
         return reject(err)
       }
@@ -49,11 +33,27 @@ const getUserFromUserId = (userId) => {
   })
 }
 
-const updateUser = (user) => {
-  user = cleanDeep(user)
+const getlendProposalsFromUserId = (userId) => {
+  return new Promise((resolve, reject) => {
+    lendProposalSchema.findOne({lenderUserId:userId},(err, data)=>{
+      if(err){
+        return reject(err)
+      }
+
+      if(data && data._doc) {
+        return resolve(data._doc)
+      }else {
+        return resolve(null)
+      }
+    })
+  })
+}
+
+const updatelendProposal = (lendProposal) => {
+  lendProposal = cleanDeep(lendProposal)
   const options = {upsert: true}
   return new Promise((resolve, reject) => {
-    userSchema.update({userId: user.userId}, user, options, (err)=>{
+    lendProposalSchema.update({proposalId: lendProposal.proposalId}, user, options, (err)=>{
       if(err){
         return reject(err)
       }
@@ -64,8 +64,8 @@ const updateUser = (user) => {
 
 
 module.exports = {
-  saveUser,
-  getUserFromUsername,
-  getUserFromUserId,
-  updateUser
+  saveProposal,
+  getlendProposalFromProposalId,
+  getlendProposalsFromUserId,
+  updatelendProposal
 }

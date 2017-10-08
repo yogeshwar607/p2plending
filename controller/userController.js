@@ -82,7 +82,7 @@ const docUpload = (files, type, userId, fileName, filePath) => {
           return userDao.updateUser(user)
         })
         .then((user) => {
-          console.log(user)
+          updateKyc(type, userId)
           return resolve(user)
         })
         .catch((e) => {
@@ -94,17 +94,34 @@ const docUpload = (files, type, userId, fileName, filePath) => {
 }
 
 const updateKyc = (type, userId) => {
+  //wait for 30 seconds and update the status to Verified
+  setTimeout(function () {
+    return userDao.getUserFromUserId(userId)
+      .then((user) => {
+        if (type === 'pan') {
+          user.panStatus = constants.STATUS.Verified
+        } else if (type === 'aadhaar') {
+          user.aadhaarStatus = constants.STATUS.Verified
+        } else if (type === 'license') {
+          user.licenseStatus = constants.STATUS.Verified
+        }
+
+        user = ratingUtil.getUserRating(user)
+        return userDao.updateUser(user)
+      })
+  }, 30000)
+}
+
+const updateUser = (user, userId) => {
   return userDao.getUserFromUserId(userId)
-    .then((user) => {
-      if (type === 'pan') {
-        user.panStatus = constants.STATUS.Verified
-      } else if (type === 'aadhaar') {
-        user.aadhaarStatus = constants.STATUS.Verified
-      } else if (type === 'license') {
-        user.licenseStatus = constants.STATUS.Verified
-      }
-      user = ratingUtil.getUserRating(user)
-      return userDao.updateUser(user)
+    .then((newUser) => {
+        newUser.name= user.name || newUser.name,
+        newUser.username= user.username || newUser.username,
+        newUser.email= user.email || newUser.email,
+        newUser.mobile= user.mobile || newUser.mobile,
+        newUser.password= user.password || newUser.password,
+        newUser.dob = user.dob || newUser.dob
+      return userDao.updateUser(newUser)
     })
 }
 
@@ -113,5 +130,6 @@ module.exports = {
   loginUser,
   getUser,
   docUpload,
-  updateKyc
+  updateKyc,
+  updateUser
 }
