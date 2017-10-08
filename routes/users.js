@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controller/userController')
+const loanProposalController = require('../controller/loanProposalController')
+const lendProposalController = require('../controller/lendProposalController')
 const logger = require('../utils/logger')
 const fs = require('fs-extra')
 const multer = require('multer')
@@ -89,7 +91,16 @@ router.post('/doc/upload', upload.any(), function(req, res, next) {
         success:false,
         message: e.message
       })
+<<<<<<< Updated upstream
     }
+=======
+    })
+})
+
+router.get('/update-kyc', function(req, res, next) {
+  const type = req.query.type
+  const userId = req.query.userId
+>>>>>>> Stashed changes
 
     //send image to signzy
     signzy.createIdentity(userId, type, fileName)
@@ -101,4 +112,99 @@ router.post('/doc/upload', upload.any(), function(req, res, next) {
   })
 })
 
+<<<<<<< Updated upstream
+=======
+router.post('/update', function(req, res, next) {
+  const userId = req.query.userId
+  const user = {
+    userId: req.query.userId,
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    mobile: req.body.mobile,
+    password: req.body.password,
+    dob: req.body.dob
+  }
+
+  return userController.updateUser(user, userId)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded')
+      res.json({
+        success:true,
+        user: user
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading', e)
+      res.json({
+        success:false,
+        message: e.message
+      })
+    })
+})
+
+router.get('/me/loan-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return loanProposalController.getProposals(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting proposals'
+      })
+    })
+})
+
+router.get('/loan-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return loanProposalController.getMatchedProposals(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned matched proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned matched proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting matched proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting matched proposals'
+      })
+    })
+})
+
+router.get('/me/lend-proposals', function(req, res, next) {
+  const userId = req.query.userId || req.body.userId
+
+  return lendProposalController.getProposalFromUserId(userId)
+    .then((data) => {
+      logger.info(userId, 'successfully returned proposals')
+      res.json({
+        success:true,
+        message:'successfully retuned proposals',
+        proposals: data
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while getting proposals', e)
+      res.json({
+        success:false,
+        message:'error while getting proposals'
+      })
+    })
+})
+
+>>>>>>> Stashed changes
 module.exports = router

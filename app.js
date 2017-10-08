@@ -9,6 +9,8 @@ const cors = require('cors')
 const index = require('./routes/index')
 const users = require('./routes/users')
 const thirdparty = require('./routes/thirdparty')
+const loanProposals = require('./routes/loanProposals')
+const lendProposals = require('./routes/lendProposals')
 
 const app = express()
 
@@ -28,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', index)
 app.use('/users', users)
 app.use('/thirdparty', thirdparty)
+app.use('/loan-proposals', loanProposals)
+app.use('/lend-proposals', lendProposals)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
