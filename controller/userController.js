@@ -94,19 +94,6 @@ const docUpload = (files, type, userId, fileName, filePath) => {
 }
 
 const updateKyc = (type, userId) => {
-<<<<<<< Updated upstream
-  return userDao.getUserFromUserId(userId)
-    .then((user) => {
-      if (type === 'pan') {
-        user.panStatus = constants.STATUS.Verified
-      } else if (type === 'aadhaar') {
-        user.aadhaarStatus = constants.STATUS.Verified
-      } else if (type === 'license') {
-        user.licenseStatus = constants.STATUS.Verified
-      }
-      user = ratingUtil.getUserRating(user)
-      return userDao.updateUser(user)
-=======
   //wait for 30 seconds and update the status to Verified
   setTimeout(function () {
     return userDao.getUserFromUserId(userId)
@@ -135,7 +122,6 @@ const updateUser = (user, userId) => {
         newUser.password= user.password || newUser.password,
         newUser.dob = user.dob || newUser.dob
       return userDao.updateUser(newUser)
->>>>>>> Stashed changes
     })
 }
 

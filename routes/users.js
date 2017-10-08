@@ -79,41 +79,50 @@ router.get('/', function(req, res, next) {
 })
 
 router.post('/doc/upload', upload.any(), function(req, res, next) {
-  const type = req.body.type
-  const userId = req.body.userId
+  const type = req.body.type || req.query.type
+  const userId = req.body.userId || req.query.userId
   const files = req.files[0]
   const fileName = type + '_' + userId + '.png'
   const filePath = './public/images/'+ fileName
-  fs.rename(files.path, filePath, function(e) {
-    if (e) {
-      logger.err(userId, 'error while uploading ' + type, e)
-      return res.json({
+
+  return userController.docUpload(files, type, userId, fileName, filePath)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded ' + type)
+      res.json({
+        success:true,
+        user: user
+      })
+    })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading' + type, e)
+      res.json({
         success:false,
         message: e.message
       })
-<<<<<<< Updated upstream
-    }
-=======
     })
 })
 
-router.get('/update-kyc', function(req, res, next) {
-  const type = req.query.type
-  const userId = req.query.userId
->>>>>>> Stashed changes
+router.get('/update-kyc', upload.any(), function(req, res, next) {
+  const type = req.body.type || req.query.type
+  const userId = req.body.userId || req.query.userId
 
-    //send image to signzy
-    signzy.createIdentity(userId, type, fileName)
-    //update user object with status of document
-    return res.json({
-      success:true,
-      message: type + ' uploaded successfully'
+  return userController.updateKyc(type, userId)
+    .then((user) => {
+      logger.info(userId, 'successfully uploaded ' + type)
+      res.json({
+        success:true,
+        user: user
+      })
     })
-  })
+    .catch((e) => {
+      logger.err(userId, 'error while uploading' + type, e)
+      res.json({
+        success:false,
+        message: e.message
+      })
+    })
 })
 
-<<<<<<< Updated upstream
-=======
 router.post('/update', function(req, res, next) {
   const userId = req.query.userId
   const user = {
@@ -206,5 +215,4 @@ router.get('/me/lend-proposals', function(req, res, next) {
     })
 })
 
->>>>>>> Stashed changes
 module.exports = router
